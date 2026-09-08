@@ -49,11 +49,13 @@ class GOLEngine:
         self.__width = width
         self.__height = height
 
-        self.__current_state = []
-        for x in range(self.__width):
-            self.__current_state.append([])
-            for _ in range(self.__height):
-                self.__current_state[x].append(0)
+        self.__current_state = [[0 for _ in range(self.__height)]for _ in range(self.__width)]
+        # version moins efficace
+        # self.__current_state = []
+        # for x in range(self.__width):
+        #     self.__current_state.append([])
+        #     for _ in range(self.__height):
+        #         self.__current_state[x].append(0)
         self.__new_state = deepcopy(self.__current_state)
 
     def randomize(self, percent_on: float = 0.5) -> None:
@@ -93,3 +95,4 @@ print(g.to_string())
 g.process()
 print(g.to_string())
 pass
+  
