@@ -6,8 +6,19 @@ class GOLEngine:
     def __init__(self, width: int = 12, height: int = 8) -> None:
         self.__width = width
         self.__height = height
-        self.__grille=[[]]
-        self.__grille_futur = deepcopy(self.__grille)
+        self.__grid=[]
+        for x in range(self.width):
+            for _ in range(self.__height):
+                self.__grid[x].append(0)
+
+        self.__grid_futur = deepcopy(self.__grid)
+        
+
+    def validate_size(self, size, text_info) -> None:
+        if not isinstance(size, int):
+            raise TypeError(f"{text_info} doit être un entier")
+        if size < 3 or size > 5000:
+            raise ValueError(f"la valeur de {text_info} doit être entre 3 et 5000")
 
     @property
     def width(self) -> int:
@@ -15,6 +26,7 @@ class GOLEngine:
 
     @width.setter
     def width(self, value: int) -> None:
+        self.validate_size(value, "width")
         self.__width = value
 
     @property
@@ -23,7 +35,9 @@ class GOLEngine:
 
     @height.setter
     def height(self, value: int) -> None:
+        self.validate_size(value, "height")
         self.__height = value
+
 
     def get_cell(self, x:int, y:int) -> CellType:
         return self.__grille[[x,y]]
@@ -33,7 +47,7 @@ class GOLEngine:
 
     def resize(self, width: int, height: int) -> None:
         self.width = width
-        self.height = height
+        self.height = height«
 
     def randomize(self, percent_on: float = 0.5) -> None:
         for x in range(self.width):
@@ -59,7 +73,6 @@ class GOLEngine:
                 
                 self.__grille_futur[y][x] = next_status
 
-        self.__grille = 
                 
 
     def check_neighbours(self, x, y) -> int:
