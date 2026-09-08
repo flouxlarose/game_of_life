@@ -47,13 +47,28 @@ class GOLEngine:
 
     def resize(self, width: int, height: int) -> None:
         self.width = width
-        self.height = height«
+        self.height = height
 
     def randomize(self, percent_on: float = 0.5) -> None:
         for x in range(self.width):
             for y in range(self.height):
                 if (random.random() <= percent_on):
                     self.set_cell(x, y, 1)
+
+        # CODE DU PROF
+        # for x in range(1, self.__width - 1):
+        #     for y in range(1, self.__height - 1):
+        #           self.__current_state[x][y] = int(random() <= percent_on else 0)
+
+    def to_string(self):
+        pass
+        # CODE DU PROF
+        # res: str = ""
+        # for y in range(self.__height):
+        #     for x in range(self.__width):
+        #         res += str(self.__currentstate[x][y])
+        #     res += "\n"
+        # return res
 
     def tick(self) -> None:
         row = len(self.grille)
@@ -72,6 +87,26 @@ class GOLEngine:
                     next_status = 0
                 
                 self.__grille_futur[y][x] = next_status
+
+
+        for x in range(1, self.__width - 1):
+            for y in range(1, self.__height - 1):
+                neighbours: int = 0
+                for i in range(-1, 2):
+                    for j in range(-1, 2):
+                        if i != 0 or j != 0:
+                            neighbours += self.__current_state[x+i][y+j]
+                if self.__current_state[x][y] == 0:
+                    if neighbours == 3:
+                        self.__current_state[x][y] = 1
+                else:
+                    if neighbours == 2 or neighbours == 3:
+                        pass
+                    else:
+                        self.__current_state[x][y] = 0
+
+
+        
 
                 
 
