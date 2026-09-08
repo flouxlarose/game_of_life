@@ -14,7 +14,7 @@ class GOLEngine:
         #                                0  1  2  3  4  5  6  7  8
         self.__alive_rule: tuple[int] = (0, 0, 1, 1, 0, 0, 0, 0, 0)
         self.__dead_rule:  tuple[int] = (0, 0, 0, 1, 0, 0, 0, 0, 0)
-        self._rules: tuple[tuple[int]] = (self.__dead_rule, self.__alive_rule)
+        self.__rules: tuple[tuple[int]] = (self.__dead_rule, self.__alive_rule)
 
         self.resize(width, height)
 
@@ -73,7 +73,7 @@ class GOLEngine:
                 neighbours: int = sum(self.__current_state[x-1][y-1:y+2]) + \
                                   sum(self.__current_state[x+1][y-1:y+2]) + \
                                   sum(self.__current_state[x][y-1:y+2:2])
-                self.__new_state[x][y] = self._rules[self.__current_state[x][y]][neighbours]
+                self.__new_state[x][y] = self.__rules[self.__current_state[x][y]][neighbours]
                 # MOIN EFFICACE (ligne 76)
                 # if bool(self.__current_state[x][y]): # vivant
                 #     self.__new_state[x][y] = int(neighbours in (2, 3))
