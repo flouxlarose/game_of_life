@@ -11,6 +11,10 @@ class GOLEngine:
         self.__height: int
         self.__current_state: list[list[CellType]]
         self.__new_state: list[list[CellType]]
+        #                                0  1  2  3  4  5  6  7  8
+        self.__alive_rule: tuple[int] = (0, 0, 1, 1, 0, 0, 0, 0, 0)
+        self.__dead_rule:  tuple[int] = (0, 0, 0, 1, 0, 0, 0, 0, 0)
+        self._rules: tuple[tuple[int]] = (self.__dead_rule, self.__alive_rule)
 
         self.resize(width, height)
 
@@ -66,15 +70,15 @@ class GOLEngine:
     def process(self) -> None:
         for x in range(1, self.__width - 1):
             for y in range(1, self.__height - 1):
-                neighbours: int = 0
-                for i in range(-1, 2):
-                    for j in range(-1, 2):
-                        if i != 0 or j != 0:
-                            neighbours += self.__current_state[x+i][y+j]
-                if bool(self.__current_state[x][y]): # vivant
-                    self.__new_state[x][y] = int(neighbours in (2, 3))
-                else: # mort
-                    self.__new_state[x][y] = int(neighbours == 3)
+                neighbours: int = sum(self.__current_state[x-1][y-1:y+2]) + \
+                                  sum(self.__current_state[x+1][y-1:y+2]) + \
+                                  sum(self.__current_state[x][y-1:y+2:2])
+                self.__new_state[x][y] = self._rules[self.__current_state[x][y]][neighbours]
+                # MOIN EFFICACE (ligne 76)
+                # if bool(self.__current_state[x][y]): # vivant
+                #     self.__new_state[x][y] = int(neighbours in (2, 3))
+                # else: # mort
+                #     self.__new_state[x][y] = int(neighbours == 3)
 
         self.__current_state, self.__new_state = self.__new_state, self.__current_state
 
