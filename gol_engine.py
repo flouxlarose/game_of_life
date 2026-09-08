@@ -95,15 +95,18 @@ class GOLEngine:
                 for i in range(-1, 2):
                     for j in range(-1, 2):
                         if i != 0 or j != 0:
-                            neighbours += self.__current_state[x+i][y+j]
+                            neighbours += self.__grid_futur[x+i][y+j]
                 if self.__current_state[x][y] == 0:
                     if neighbours == 3:
-                        self.__current_state[x][y] = 1
+                        self.__grid_futur[x][y] = 1
                 else:
                     if neighbours == 2 or neighbours == 3:
                         pass
                     else:
-                        self.__current_state[x][y] = 0
+                        self.__grid_futur[x][y] = 0
+        
+        self.grid, self.__grid_futur = self.__grid_futur, self.grid
+            
 
 
         
