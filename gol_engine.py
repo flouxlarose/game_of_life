@@ -1,4 +1,5 @@
 import random
+from copy import deepcopy
 type CellType = int
 
 class GOLEngine:    
@@ -6,7 +7,7 @@ class GOLEngine:
         self.__width = width
         self.__height = height
         self.__grille=[[]]
-        self.__grille_futur = copy.deepcopy(grille)
+        self.__grille_futur = deepcopy(self.__grille)
 
     @property
     def width(self) -> int:
@@ -41,7 +42,6 @@ class GOLEngine:
                     self.set_cell(x, y, 1)
 
     def tick(self) -> None:
-        grille2 = self.grille
         row = len(self.grille)
         col = len(self.grille[0])
 
@@ -57,7 +57,9 @@ class GOLEngine:
                 elif (cell_value and cell_alive < 2 or cell_alive > 3):
                     next_status = 0
                 
-                grille2[y][x] = next_status
+                self.__grille_futur[y][x] = next_status
+
+        self.__grille = 
                 
 
     def check_neighbours(self, x, y) -> int:
