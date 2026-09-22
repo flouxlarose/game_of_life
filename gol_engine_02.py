@@ -1,5 +1,17 @@
 from random import random
 from copy import deepcopy
+import sys
+
+from PySide6.QtCore import Qt, Slot
+from PySide6.QtGui import QPixmap, QColor
+from PySide6.QtWidgets import (QApplication, 
+                               QWidget, 
+                               QLabel,
+                               QPushButton, 
+                               QSlider, 
+                               QVBoxLayout, QHBoxLayout)
+
+from __feature__ import snake_case, true_property # type: ignore[import-not-found]
 
 
 type CellType = int
@@ -11,9 +23,12 @@ class GOLEngine:
         self.__height: int
         self.__current_state: list[list[CellType]]
         self.__new_state: list[list[CellType]]
-        #                                0  1  2  3  4  5  6  7  8
+
+        # Nombre de voisins              0  1  2  3  4  5  6  7  8
+        #                                |  |  |  |  |  |  |  |  |
+        self.__dead_rule: tuple[int]  = (0, 0, 0, 1, 0, 0, 0, 0, 0)
         self.__alive_rule: tuple[int] = (0, 0, 1, 1, 0, 0, 0, 0, 0)
-        self.__dead_rule:  tuple[int] = (0, 0, 0, 1, 0, 0, 0, 0, 0)
+        # État courant                     0 = mort          1 = vivant
         self.__rules: tuple[tuple[int]] = (self.__dead_rule, self.__alive_rule)
 
         self.resize(width, height)
@@ -40,6 +55,22 @@ class GOLEngine:
     def height(self, value: int) -> None:
         self.resize(self.__width, value)
 
+    @property
+    def cell_count(self) -> int:
+        pass
+
+    @property
+    def alive_count(self) -> int:
+        pass
+
+    @property
+    def dead_count(self) -> int:
+        pass
+
+    @property
+    def current_generation(self) -> int:
+        pass
+
     def get_cell(self, x: int, y: int) -> CellType:
         return self.__current_state[x][y]
 
@@ -53,13 +84,7 @@ class GOLEngine:
         self.__width = width
         self.__height = height
 
-        self.__current_state = [[0 for _ in range(self.__height)]for _ in range(self.__width)]
-        # version moins efficace
-        # self.__current_state = []
-        # for x in range(self.__width):
-        #     self.__current_state.append([])
-        #     for _ in range(self.__height):
-        #         self.__current_state[x].append(0)
+        self.__current_state = [[0 for _ in range(self.__height)] for _ in range(self.__width)]
         self.__new_state = deepcopy(self.__current_state)
 
     def randomize(self, percent_on: float = 0.5) -> None:
@@ -71,14 +96,9 @@ class GOLEngine:
         for x in range(1, self.__width - 1):
             for y in range(1, self.__height - 1):
                 neighbours: int = sum(self.__current_state[x-1][y-1:y+2]) + \
-                                  sum(self.__current_state[x+1][y-1:y+2]) + \
-                                  sum(self.__current_state[x][y-1:y+2:2])
+                                  sum(self.__current_state[x  ][y-1:y+2:2]) + \
+                                  sum(self.__current_state[x+1][y-1:y+2])
                 self.__new_state[x][y] = self.__rules[self.__current_state[x][y]][neighbours]
-                # MOIN EFFICACE (ligne 76)
-                # if bool(self.__current_state[x][y]): # vivant
-                #     self.__new_state[x][y] = int(neighbours in (2, 3))
-                # else: # mort
-                #     self.__new_state[x][y] = int(neighbours == 3)
 
         self.__current_state, self.__new_state = self.__new_state, self.__current_state
 
@@ -89,14 +109,46 @@ class GOLEngine:
                 res += str(self.__current_state[x][y])
             res += "\n"
         return res
+    
+class GOLVue(QWidget):
+    def __init__(self, parent = None):
+        super().__init__(parent)
+
+        control_layout = QVBoxLayout()
+        controlTitle = QLabel("Controller")
+        startButton = QPushButton("Start", parent)
+        stepButton = QPushButton("Next Step", parent)
+        speedSlider = QSlider()
+        speedSlider.set_range(0, 100)
+        speedSlider.value = 25
+        speedSlider.orientation = Qt.Orientation.Horizontal
+        control_layout.add_widget(controlTitle)
+        control_layout.add_widget(startButton)
+        control_layout.add_widget(stepButton)
+        control_layout.add_widget(speedSlider)
+
+        # startButton.valueChanged.connect(colorValue.setNum)
+    #   \_______/                      \______/ 
+    #    émetteur                       récepteur
+    #             \___________/                  \____/ 
+    #              signal émis                    connecteur
+
+        self.set_layout(control_layout)
+
+def main():
+    app = QApplication(sys.argv)
+
+    g = GOLEngine()
+    g.resize(14, 5)
+    g.randomize()
+    g.process()
+    print(g.to_string())
+
+    w = GOLVue()
+    w.show()
+
+    sys.exit(app.exec())
 
 
-
-g = GOLEngine()
-g.resize(14, 5)
-g.randomize()
-print(g.to_string())
-g.process()
-print(g.to_string())
-pass
-  
+if __name__ == "__main__":
+    main()
